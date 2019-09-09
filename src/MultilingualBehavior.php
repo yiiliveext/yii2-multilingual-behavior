@@ -96,6 +96,11 @@ class MultilingualBehavior extends Behavior
 
     public $currentLanguage;
 
+    /**
+     * @var boolean Populate translations automatically before update
+     */
+    public $autoPopulateTranslations = false;
+
     private $ownerClassName;
     private $ownerPrimaryKey;
     private $langClassShortName;
@@ -331,11 +336,15 @@ class MultilingualBehavior extends Behavior
     {
         /** @var ActiveRecord $owner */
         $owner = $this->owner;
+        if ($this->autoPopulateTranslations && !$owner->isRelationPopulated('translations')) {
+            $owner->translations;
+        }
 
         if ($owner->isRelationPopulated('translations')) {
             $translations = $this->indexByLanguage($owner->getRelatedRecords()['translations']);
             $this->saveTranslations($translations);
         }
+
     }
 
     /**
